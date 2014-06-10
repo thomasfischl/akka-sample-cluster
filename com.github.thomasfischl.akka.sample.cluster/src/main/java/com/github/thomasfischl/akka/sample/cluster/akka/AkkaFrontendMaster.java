@@ -3,7 +3,7 @@ package com.github.thomasfischl.akka.sample.cluster.akka;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
-import akka.routing.RoundRobinRouter;
+import akka.routing.RoundRobinPool;
 
 import com.github.thomasfischl.akka.sample.cluster.akka.AkkaMessages.SensorDataProcessMsg;
 import com.github.thomasfischl.akka.sample.cluster.akka.AkkaMessages.SensorDataStoreMsg;
@@ -12,16 +12,12 @@ import com.github.thomasfischl.akka.sample.cluster.akka.AkkaMessages.SensorDataW
 
 public class AkkaFrontendMaster extends UntypedActor {
 
-  // private int nrOfWorkers;
   private ActorRef workerRouter;
   private AkkaFrontendFacade facade;
 
   public AkkaFrontendMaster(int nrOfWorkers, AkkaFrontendFacade facade) {
-    // this.nrOfWorkers = nrOfWorkers;
-
     this.facade = facade;
-    workerRouter = this.getContext().actorOf(new Props(AkkaSensorDataStoreWorker.class).withRouter(new RoundRobinRouter(nrOfWorkers)),
-        "workerRouter");
+    workerRouter = this.getContext().actorOf(Props.create(AkkaSensorDataStoreWorker.class).withRouter(new RoundRobinPool(nrOfWorkers)), "workerRouter");
   }
 
   @Override

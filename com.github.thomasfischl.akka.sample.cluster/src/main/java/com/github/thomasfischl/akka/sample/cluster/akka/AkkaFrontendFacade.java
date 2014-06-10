@@ -7,8 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import akka.actor.UntypedActor;
-import akka.actor.UntypedActorFactory;
+import akka.japi.Creator;
 
 import com.codahale.metrics.Counter;
 import com.github.thomasfischl.akka.sample.cluster.BrainServerConfiguraiton;
@@ -17,6 +16,19 @@ import com.github.thomasfischl.akka.sample.cluster.SensorDataGroup;
 import com.github.thomasfischl.akka.sample.cluster.akka.AkkaMessages.SensorDataWorkMsg;
 
 public class AkkaFrontendFacade {
+
+  private static class CreatorImplementation implements Creator<AkkaFrontendMaster> {
+    private AkkaFrontendFacade facade;
+
+    public CreatorImplementation(AkkaFrontendFacade facade) {
+      this.facade = facade;
+    }
+
+    @Override
+    public AkkaFrontendMaster create() throws Exception {
+      return new AkkaFrontendMaster(BrainServerConfiguraiton.AKKA_WORKERS_MAX, facade);
+    }
+  }
 
   private ActorSystem system;
 
@@ -30,13 +42,7 @@ public class AkkaFrontendFacade {
 
   public AkkaFrontendFacade() {
     system = ActorSystem.create("BrainServer");
-
-    frontendMaster = system.actorOf(new Props(new UntypedActorFactory() {
-      public UntypedActor create() {
-        return new AkkaFrontendMaster(BrainServerConfiguraiton.AKKA_WORKERS_MAX, AkkaFrontendFacade.this);
-      }
-    }), "frontendMaster");
-
+    frontendMaster = system.actorOf(Props.create(new CreatorImplementation(this)), "frontendMaster");
     backlogCounter = MetricService.getInstance().registerCounter("async-backlog");
   }
 
@@ -44,7 +50,7 @@ public class AkkaFrontendFacade {
     long sessionId = counter.getAndIncrement();
     responseCallbacks.put(sessionId, responseHandler);
     backlogCounter.inc();
-    frontendMaster.tell(new SensorDataWorkMsg(sessionId, userId, group));
+    frontendMaster.tell(new SensorDataWorkMsg(sessionId, userId, group), ActorRef.noSender());
   }
 
   public void finishRequest(long sessionId, SensorDataGroup result) {
