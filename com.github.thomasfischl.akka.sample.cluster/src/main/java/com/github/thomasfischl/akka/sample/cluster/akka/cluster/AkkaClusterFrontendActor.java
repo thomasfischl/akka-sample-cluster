@@ -20,7 +20,7 @@ public class AkkaClusterFrontendActor extends AkkaFrontendMaster {
 
   @Override
   protected void init() {
-    workerRouter = getContext().actorOf(FromConfig.getInstance().props(), "factorialBackendRouter");
+    workerRouter = getContext().actorOf(FromConfig.getInstance().props(), "sensorBackendRouter");
   }
 
   @Override

@@ -12,9 +12,9 @@ public class AkkaClusterFrontendFacade extends AkkaFrontendFacade {
 
   @Override
   protected void init() {
-    Config config = ConfigFactory.parseString("akka.cluster.roles = [frontend]").withFallback(ConfigFactory.load("factorial"));
+    Config config = ConfigFactory.parseString("akka.cluster.roles = [frontend]").withFallback(ConfigFactory.load("cluster"));
     system = ActorSystem.create("ClusterSystem", config);
-    frontendMaster = system.actorOf(Props.create(AkkaClusterFrontendActor.class, BrainServerConfiguraiton.AKKA_WORKERS_MAX, this), "factorialFrontend");
+    frontendMaster = system.actorOf(Props.create(AkkaClusterFrontendActor.class, BrainServerConfiguraiton.AKKA_WORKERS_MAX, this), "sensorFrontend");
   }
 
 }

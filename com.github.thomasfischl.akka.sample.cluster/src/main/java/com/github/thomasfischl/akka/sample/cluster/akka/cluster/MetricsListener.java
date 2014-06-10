@@ -1,14 +1,13 @@
 package com.github.thomasfischl.akka.sample.cluster.akka.cluster;
 
-//#metrics-listener
 import akka.actor.UntypedActor;
 import akka.cluster.Cluster;
 import akka.cluster.ClusterEvent.ClusterMetricsChanged;
 import akka.cluster.ClusterEvent.CurrentClusterState;
 import akka.cluster.NodeMetrics;
 import akka.cluster.StandardMetrics;
-import akka.cluster.StandardMetrics.HeapMemory;
 import akka.cluster.StandardMetrics.Cpu;
+import akka.cluster.StandardMetrics.HeapMemory;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 
@@ -17,18 +16,15 @@ public class MetricsListener extends UntypedActor {
 
   Cluster cluster = Cluster.get(getContext().system());
 
-  //subscribe to ClusterMetricsChanged
   @Override
   public void preStart() {
     cluster.subscribe(getSelf(), ClusterMetricsChanged.class);
   }
 
-  //re-subscribe when restart
   @Override
   public void postStop() {
     cluster.unsubscribe(getSelf());
   }
-
 
   @Override
   public void onReceive(Object message) {
@@ -59,10 +55,8 @@ public class MetricsListener extends UntypedActor {
   void logCpu(NodeMetrics nodeMetrics) {
     Cpu cpu = StandardMetrics.extractCpu(nodeMetrics);
     if (cpu != null && cpu.systemLoadAverage().isDefined()) {
-      log.info("Load: {} ({} processors)", cpu.systemLoadAverage().get(), 
-        cpu.processors());
+      log.info("Load: {} ({} processors)", cpu.systemLoadAverage().get(), cpu.processors());
     }
   }
 
 }
-//#metrics-listener
