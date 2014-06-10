@@ -1,6 +1,10 @@
 package com.github.thomasfischl.akka.sample.cluster;
 
-public class SensorData {
+import java.io.Serializable;
+
+public class SensorData implements Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   private String name;
 

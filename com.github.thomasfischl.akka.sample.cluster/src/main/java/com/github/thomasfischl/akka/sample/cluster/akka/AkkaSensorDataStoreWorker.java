@@ -46,7 +46,6 @@ public class AkkaSensorDataStoreWorker extends UntypedActor {
           }
         }
       });
-
     }
   }
 

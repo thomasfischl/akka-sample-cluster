@@ -1,10 +1,14 @@
 package com.github.thomasfischl.akka.sample.cluster.akka;
 
+import java.io.Serializable;
+
 import com.github.thomasfischl.akka.sample.cluster.SensorDataGroup;
 
 public class AkkaMessages {
 
-  public static class SensorDataWorkMsg {
+  public static class SensorDataWorkMsg implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final SensorDataGroup group;
 
@@ -31,7 +35,9 @@ public class AkkaMessages {
     }
   }
 
-  public static class SensorDataWorResultMsg {
+  public static class SensorDataWorResultMsg implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final SensorDataGroup group;
     private final long sessionId;
@@ -52,7 +58,9 @@ public class AkkaMessages {
 
   }
 
-  public static class SensorDataStoreMsg {
+  public static class SensorDataStoreMsg implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final SensorDataWorkMsg message;
 
@@ -66,7 +74,9 @@ public class AkkaMessages {
 
   }
 
-  public static class SensorDataProcessMsg {
+  public static class SensorDataProcessMsg implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final SensorDataWorkMsg message;
 

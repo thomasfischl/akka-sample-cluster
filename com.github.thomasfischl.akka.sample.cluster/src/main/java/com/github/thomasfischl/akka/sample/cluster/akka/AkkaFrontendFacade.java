@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import akka.japi.Creator;
 
 import com.codahale.metrics.Counter;
 import com.github.thomasfischl.akka.sample.cluster.BrainServerConfiguraiton;
@@ -17,22 +16,9 @@ import com.github.thomasfischl.akka.sample.cluster.akka.AkkaMessages.SensorDataW
 
 public class AkkaFrontendFacade {
 
-  private static class CreatorImplementation implements Creator<AkkaFrontendMaster> {
-    private AkkaFrontendFacade facade;
+  protected ActorSystem system;
 
-    public CreatorImplementation(AkkaFrontendFacade facade) {
-      this.facade = facade;
-    }
-
-    @Override
-    public AkkaFrontendMaster create() throws Exception {
-      return new AkkaFrontendMaster(BrainServerConfiguraiton.AKKA_WORKERS_MAX, facade);
-    }
-  }
-
-  private ActorSystem system;
-
-  private ActorRef frontendMaster;
+  protected ActorRef frontendMaster;
 
   private AtomicLong counter = new AtomicLong();
 
@@ -41,9 +27,13 @@ public class AkkaFrontendFacade {
   private Counter backlogCounter;
 
   public AkkaFrontendFacade() {
-    system = ActorSystem.create("BrainServer");
-    frontendMaster = system.actorOf(Props.create(new CreatorImplementation(this)), "frontendMaster");
+    init();
     backlogCounter = MetricService.getInstance().registerCounter("async-backlog");
+  }
+
+  protected void init() {
+    system = ActorSystem.create("BrainServer");
+    frontendMaster = system.actorOf(Props.create(AkkaFrontendMaster.class, BrainServerConfiguraiton.AKKA_WORKERS_MAX, this), "frontendMaster");
   }
 
   public void processSensorData(String userId, SensorDataGroup group, ResponseHandler responseHandler) {

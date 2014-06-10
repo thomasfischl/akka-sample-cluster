@@ -12,11 +12,17 @@ import com.github.thomasfischl.akka.sample.cluster.akka.AkkaMessages.SensorDataW
 
 public class AkkaFrontendMaster extends UntypedActor {
 
-  private ActorRef workerRouter;
+  protected ActorRef workerRouter;
   private AkkaFrontendFacade facade;
+  private int nrOfWorkers;
 
   public AkkaFrontendMaster(int nrOfWorkers, AkkaFrontendFacade facade) {
     this.facade = facade;
+    this.nrOfWorkers = nrOfWorkers;
+    init();
+  }
+
+  protected void init() {
     workerRouter = this.getContext().actorOf(Props.create(AkkaSensorDataStoreWorker.class).withRouter(new RoundRobinPool(nrOfWorkers)), "workerRouter");
   }
 

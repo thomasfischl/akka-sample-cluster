@@ -1,12 +1,15 @@
 package com.github.thomasfischl.akka.sample.cluster;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import com.google.common.base.Joiner;
 
-public class SensorDataGroup {
+public class SensorDataGroup implements Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   private List<SensorData> values = new ArrayList<SensorData>();
 

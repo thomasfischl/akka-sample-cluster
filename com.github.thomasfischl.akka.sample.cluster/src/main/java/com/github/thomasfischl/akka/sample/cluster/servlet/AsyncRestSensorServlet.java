@@ -19,6 +19,7 @@ import com.github.thomasfischl.akka.sample.cluster.MetricService;
 import com.github.thomasfischl.akka.sample.cluster.SensorDataGroup;
 import com.github.thomasfischl.akka.sample.cluster.akka.AkkaFrontendFacade;
 import com.github.thomasfischl.akka.sample.cluster.akka.ResponseHandler;
+import com.github.thomasfischl.akka.sample.cluster.akka.cluster.AkkaClusterFrontendFacade;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 
@@ -27,7 +28,8 @@ public class AsyncRestSensorServlet extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
 
-  private AkkaFrontendFacade frontend = new AkkaFrontendFacade();
+  // private AkkaFrontendFacade frontend = new AkkaFrontendFacade();
+  private AkkaFrontendFacade frontend = new AkkaClusterFrontendFacade();
 
   private Timer timer;
 
