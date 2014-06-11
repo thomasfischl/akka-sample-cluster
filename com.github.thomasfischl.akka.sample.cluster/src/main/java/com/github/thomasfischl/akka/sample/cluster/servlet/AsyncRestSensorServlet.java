@@ -19,7 +19,6 @@ import com.github.thomasfischl.akka.sample.cluster.MetricService;
 import com.github.thomasfischl.akka.sample.cluster.SensorDataGroup;
 import com.github.thomasfischl.akka.sample.cluster.akka.AkkaFrontendFacade;
 import com.github.thomasfischl.akka.sample.cluster.akka.ResponseHandler;
-import com.github.thomasfischl.akka.sample.cluster.akka.cluster.AkkaClusterFrontendFacade;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 
@@ -28,8 +27,8 @@ public class AsyncRestSensorServlet extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
 
-  // private AkkaFrontendFacade frontend = new AkkaFrontendFacade();
-  private AkkaFrontendFacade frontend = new AkkaClusterFrontendFacade();
+  private AkkaFrontendFacade frontend = new AkkaFrontendFacade();
+  // private AkkaFrontendFacade frontend = new AkkaClusterFrontendFacade();
 
   private Timer timer;
 
@@ -79,8 +78,7 @@ public class AsyncRestSensorServlet extends HttpServlet {
 
       if (Strings.isNullOrEmpty(userId)) {
         resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        PrintWriter writer = resp.getWriter();
-        writer.println("The userid is missing. E.g. http://localhost:8080/rest/001");
+        ServletHelper.printUsage(resp.getWriter());
         asyncCtx.complete();
         ctx.stop();
         return;
@@ -112,6 +110,5 @@ public class AsyncRestSensorServlet extends HttpServlet {
         }
       });
     }
-
   }
 }

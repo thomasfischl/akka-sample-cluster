@@ -45,8 +45,7 @@ public class RestSensorServlet extends HttpServlet {
 
     if (Strings.isNullOrEmpty(userId)) {
       resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      PrintWriter writer = resp.getWriter();
-      writer.println("The userid is missing. E.g. http://localhost:8080/rest/001");
+      ServletHelper.printUsage(resp.getWriter());
       return;
     }
 
